@@ -1,5 +1,4 @@
-# intelligent_systems
-Repository for content in intelligent systems
+# Intelligent Systems
 
 Repository for the Intelligent Systems course.
 
