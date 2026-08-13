@@ -1,0 +1,46 @@
+# Agentes
+.index
+.skills/
+
+# Virtual environments
+venv/
+robotics/
+env/
+ENV/
+.venv
+.old
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Webots
+.Webots/
+*.png
+*.jpg
+*.log
+
+# RL/Training artifacts
+models/
+*.pkl
+*.zip
+*.h5
+
+# Config backups
+*.yaml.bak

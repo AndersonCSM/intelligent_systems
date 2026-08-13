@@ -5,22 +5,33 @@ Repository for the Intelligent Systems course.
 
 ## Project Structure
 
+The repository is divided into two main projects and an agent configuration directory:
+
 ```text
 .
 ├── README.md
-├── environment.md
-├── workflow.md
-├── guide.md
-├── requirements.txt
-├── unidade_1/
-│   ├── 01_linear_regression.ipynb
-│   ├── 02_logistic_regression.ipynb
-│   ├── 03_knn.ipynb
-│   ├── linear_regression.md
-│   ├── logistic_regression.md
-│   └── knn.md
-├── unidade_2/
-└── unidade_3/
+├── LICENSE
+├── .agent/                  # Agent configurations and skills documentation
+├── course/                  # Course materials, assignments, and notebooks
+│   ├── environment.md
+│   ├── workflow.md
+│   ├── guide.md
+│   ├── requirements.txt
+│   ├── unidade_1/           # Foundations, Regressions, kNN, Perceptron, Adaline
+│   ├── unidade_2/           # MLP Networks, CNNs, Decision Trees
+│   ├── unidade_3/
+│   └── projects/            # Applied machine learning projects
+│       ├── Intrusion_detection_system_using_MLP.ipynb
+│       ├── Ionosphere-Detection-adaline-neural-network.ipynb
+│       ├── heart_disease_logistic_regression.ipynb
+│       ├── power_plant_linear_regression.ipynb
+│       └── wine_classification_using_knn.ipynb
+└── project-robotics/        # Applied robotics project (Webots + RL)
+    ├── controllers/
+    │   └── robot_v4.py/     # Main Python controllers for Webots (robot.py, etc.)
+    ├── worlds/              # Webots simulation worlds (e.g., mundo1.wbt)
+    ├── docs/                # Robotics-specific documentation
+    └── README.md
 ```
 
 ## Course Plan

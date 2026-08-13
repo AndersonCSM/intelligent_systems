@@ -1,0 +1,127 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/robots/gctronic/e-puck/protos/E-puck.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/solids/protos/SolidBox.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/obstacles/protos/OilBarrel.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/balls/protos/RobocupSoccerBall.proto"
+
+WorldInfo {
+}
+Viewpoint {
+  orientation -0.43860827475176223 -0.1435227809931738 0.8871437271689792 3.2403425283615594
+  position 0.878093961257675 -0.18981376094576452 1.208128716309569
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+RectangleArena {
+  floorSize 1.5 1.5
+}
+RobocupSoccerBall {
+  translation -0.47346004065416664 -0.2651226800161067 0.06967823200004802
+  rotation 0.36403765795120213 -0.8572940960876303 0.3640376579513396 1.7241657527577101
+}
+E-puck {
+  hidden position_0_0 649897.6128403769
+  hidden position_0_1 277677.80713848723
+  hidden linearVelocity_0 -0.02710631699308747 0.0024841568096030464 1.0792356098843023e-08
+  hidden angularVelocity_0 0.0012353819587287958 0.013479529922030387 0.003024212652672971
+  hidden rotation_1 0 1 0 2.6237775635630993
+  hidden linearVelocity_1 -0.02695967872099239 0.002470455500919861 -1.7601968593702804e-08
+  hidden angularVelocity_1 -0.12351686506161708 -1.3477691940938383 0.00302401604976718
+  hidden rotation_2 0 -1 0 1.284327007413775
+  hidden linearVelocity_2 -0.02711816766220655 0.0024855105541176626 -1.0708065367701391e-08
+  hidden angularVelocity_2 -0.1242814616607922 -1.3561235989722313 0.003024107567557235
+  translation -0.5901888955713666 -0.12305637194308536 -6.395701817950468e-05
+  rotation 0.0003428016019969432 -1.566329322338796e-05 0.9999999411208597 3.050316093849459
+  controller "<extern>"
+  supervisor TRUE
+}
+SolidBox {
+  translation -5.503110822022028e-05 -0.5490866220646122 0.04960758034325284
+  rotation 0.7113571464077092 -0.6850776583650116 0.15697009990375083 0.00021733709550671908
+  name "caixa1"
+  size 0.1 0.1 0.1
+  physics Physics {
+  }
+}
+SolidBox {
+  translation 0.25159000085669164 0.11224022966491214 0.04960760000005777
+  rotation 1.2298266872402267e-13 9.233639913460799e-14 1 0.00018798356789721536
+  name "caixa2"
+  size 0.1 0.1 0.1
+  physics Physics {
+  }
+}
+SolidBox {
+  translation -0.4300014561901145 5.781899066630601e-07 0.07367565000018067
+  rotation -2.7867279799339674e-12 -5.016705294211133e-11 -0.9999999999999999 1.9006715469200218e-06
+  name "box(3)"
+  size 0.15 0.15 0.15
+  physics Physics {
+  }
+}
+SolidBox {
+  translation 0.6100174979638815 5.752490151239417e-07 0.07367585672740615
+  rotation 0.8483024293836946 0.3722749094786135 0.3765559454774446 9.907556520672091e-05
+  name "box(4)"
+  size 0.15 0.15 0.15
+  physics Physics {
+  }
+}
+SolidBox {
+  translation 1.2877336431746797e-06 0.25000474652237153 0.04960760000005778
+  rotation 1.407700582768757e-11 3.92910827276451e-12 1 1.0993207264725646e-05
+  name "box(1)"
+  size 0.1 0.1 0.1
+  physics Physics {
+  }
+}
+OilBarrel {
+  translation 0.36862294693656267 -0.41554004776042386 0.049691809803691624
+  rotation 4.947122328554444e-07 -1.912217526895074e-06 -0.9999999999980493 3.598862107215457e-05
+  height 0.1
+  radius 0.05
+  physics Physics {
+  }
+}
+OilBarrel {
+  translation -0.11431885811060845 -0.31477342651312534 0.07350212953842385
+  rotation 0.00020996220240399843 -5.945197994385049e-06 -0.9999999779402637 0.09094883101054538
+  name "oil barrel(1)"
+  height 0.15
+  radius 0.09
+  physics Physics {
+  }
+}
+OilBarrel {
+  translation 0.0557612052197221 0.5110140469901855 0.04969180976072852
+  rotation -9.59741502005117e-17 4.215443122254699e-16 -0.9999999999999999 0.09283124300074502
+  name "oil barrel(2)"
+  height 0.1
+  radius 0.05
+  physics Physics {
+  }
+}
+OilBarrel {
+  translation -0.39208127264515463 0.35813307205161937 0.07350219543712003
+  rotation -0.055712497685534726 0.9984468526675014 -5.3907174235089184e-17 3.141592653589793
+  name "oil barrel(3)"
+  height 0.15
+  radius 0.09
+  physics Physics {
+  }
+}
+OilBarrel {
+  translation 0.428078522111779 0.3870631782240131 0.049691809760728525
+  rotation -8.885164947576619e-17 -1.9104449046992863e-16 -1 0.09206531024500376
+  name "oil barrel(4)"
+  height 0.1
+  radius 0.05
+  physics Physics {
+  }
+}
