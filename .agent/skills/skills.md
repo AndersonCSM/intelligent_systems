@@ -34,3 +34,10 @@ Este documento lista as habilidades essenciais que o assistente deve aplicar par
   - Analisar stack traces em Python e falhas de runtime da simulação do Webots.
   - Rastrear chamadas assíncronas ou falhas de IPC.
   - Propor soluções robustas que evitem comprometer o restante do ambiente já devidamente configurado.
+
+## 6. Política de Modificação de Código
+- **Descrição**: Nenhuma alteração em código-fonte, notebooks ou arquivos de implementação deve ser feita sem autorização explícita do usuário.
+- **Ações**:
+  - Antes de editar qualquer arquivo, confirmar a permissão do usuário quando a solicitação não deixar isso inequívoco.
+  - Limitar respostas a explicações, diagnósticos e sugestões quando não houver autorização para alteração.
+  - Considerar como código-fonte as células de notebooks, scripts e demais arquivos executáveis do repositório.
