@@ -25,12 +25,16 @@ The repository is divided into two main projects and an agent configuration dire
 │       ├── heart_disease_logistic_regression.ipynb
 │       ├── power_plant_linear_regression.ipynb
 │       └── wine_classification_using_knn.ipynb
-└── project-robotics/        # Applied robotics project (Webots + RL)
-    ├── controllers/
-    │   └── robot_v4.py/     # Main Python controllers for Webots (robot.py, etc.)
-    ├── worlds/              # Webots simulation worlds (e.g., mundo1.wbt)
-    ├── docs/                # Robotics-specific documentation
-    └── README.md
+├── project-robotics/        # Applied robotics project (Webots + RL)
+│   ├── controllers/
+│   │   └── robot_v4.py/     # Main Python controllers for Webots (robot.py, etc.)
+│   ├── worlds/              # Webots simulation worlds (e.g., mundo1.wbt)
+│   ├── docs/                # Robotics-specific documentation
+│   └── README.md
+└── neural-networks/         # Neural Networks projects and assignments
+    ├── unidade-1/
+    ├── unidade-2/
+    └── unidade-3/
 ```
 
 ## Course Plan
