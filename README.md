@@ -11,7 +11,6 @@ The repository is divided into two main projects and an agent configuration dire
 .
 ├── README.md
 ├── LICENSE
-├── .agent/                  # Agent configurations and skills documentation
 ├── course/                  # Course materials, assignments, and notebooks
 │   ├── environment.md
 │   ├── workflow.md
@@ -39,6 +38,7 @@ The repository is divided into two main projects and an agent configuration dire
 - **Institution:** UFERSA - Pau dos Ferros Campus - DETEC;
 - **Instructor:** Pedro Thiago Valerio de Souza;
 - **Original repository:** <https://github.com/pedrothiag/intelligent-systems>.
+- **Current repository:** <https://github.com/AndersonCSM/intelligent_systems>.
 
 
 ### I. Objectives
