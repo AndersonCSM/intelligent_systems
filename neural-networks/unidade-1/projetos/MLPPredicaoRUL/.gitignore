@@ -1,6 +1,7 @@
+.agent/
+
 # Ignorar dados e modelos grandes
 data/*.h5
 data/*.csv
 *.h5
-*.keras
-*.pkl
+
