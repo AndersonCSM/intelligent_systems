@@ -9,3 +9,4 @@ update_index_repo.py
 data/*.h5
 data/*.csv
 *.h5
+data/
