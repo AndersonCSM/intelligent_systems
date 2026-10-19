@@ -1,64 +1,33 @@
 """
-Dicionário direto com os modelos pré-treinados do tf.keras.applications
-pronto para iterar sobre diferentes backbones com imagens redimensionadas.
+Mapeamento de arquiteturas pré-treinadas do tf.keras.applications
+organizado por família (1 versão representativa por família) para a Etapa 3.
 """
 
 from tensorflow.keras import applications
 
-pre_trained_models = {
-    # ConvNeXt
-    "ConvNeXtTiny": applications.ConvNeXtTiny,
-    "ConvNeXtSmall": applications.ConvNeXtSmall,
-    "ConvNeXtBase": applications.ConvNeXtBase,
+# 1 versão representativa por família (Triagem Arquitetural)
+representative_models_per_family = {
+    "ConvNeXt": applications.ConvNeXtTiny,
+    "DenseNet": applications.DenseNet121,          # Já executado na PoC
+    "EfficientNetV2": applications.EfficientNetV2B0, # V1 descartada
+    "Inception": applications.InceptionV3,         # Descartada (superada por Xception)
+    "MobileNet": applications.MobileNetV2,         # Descartada (foco em edge, menor capacidade)
+    "NASNet": applications.NASNetMobile,           # Descartada (lenta em GPU / RL irregular)
+    "ResNet": applications.ResNet50V2,             # Selecionada (pré-ativação V2)
+    "VGG": applications.VGG16,                     # Descartada (obsoleta, sem skip, 138M params)
+    "Xception": applications.Xception              # Reserva técnica
+}
 
-    # DenseNet
-    "DenseNet121": applications.DenseNet121,
-    "DenseNet169": applications.DenseNet169,
-    "DenseNet201": applications.DenseNet201,
-
-    # EfficientNet
-    "EfficientNetB0": applications.EfficientNetB0,
-    "EfficientNetB4": applications.EfficientNetB4,
-    "EfficientNetB7": applications.EfficientNetB7,
-
-    # EfficientNetV2
+# Modelos selecionados para treinamento no Benchmarking (Etapa 3)
+# Nota: DenseNet121 já foi treinada e seus pesos estão salvos em models/
+benchmark_selected_models = {
     "EfficientNetV2B0": applications.EfficientNetV2B0,
-    "EfficientNetV2S": applications.EfficientNetV2S,
-    "EfficientNetV2M": applications.EfficientNetV2M,
-
-    # Inception
-    "InceptionV3": applications.InceptionV3,
-    "InceptionResNetV2": applications.InceptionResNetV2,
-
-    # MobileNet
-    "MobileNet": applications.MobileNet,
-    "MobileNetV2": applications.MobileNetV2,
-    "MobileNetV3Small": applications.MobileNetV3Small,
-    "MobileNetV3Large": applications.MobileNetV3Large,
-
-    # NASNet
-    "NASNetMobile": applications.NASNetMobile,
-    "NASNetLarge": applications.NASNetLarge,
-
-    # ResNet
-    "ResNet50": applications.ResNet50,
-    "ResNet101": applications.ResNet101,
-    "ResNet152": applications.ResNet152,
-
-    # ResNetV2
     "ResNet50V2": applications.ResNet50V2,
-    "ResNet101V2": applications.ResNet101V2,
-    "ResNet152V2": applications.ResNet152V2,
-
-    # VGG
-    "VGG16": applications.VGG16,
-    "VGG19": applications.VGG19,
-
-    # Xception
-    "Xception": applications.Xception
+    "ConvNeXtTiny": applications.ConvNeXtTiny,
+    "Xception": applications.Xception,
 }
 
 if __name__ == "__main__":
-    print(f"Total de modelos pré-treinados prontos para iterar: {len(pre_trained_models)}")
-    for name in pre_trained_models:
-        print(f" - {name}")
+    print(f"Total de famílias candidatas: {len(representative_models_per_family)}")
+    print(f"Modelos selecionados para novo treino na Etapa 3: {list(benchmark_selected_models.keys())}")
+    print("Nota: DenseNet121 já possui checkpoint e métricas na PoC para compor o Ensemble.")

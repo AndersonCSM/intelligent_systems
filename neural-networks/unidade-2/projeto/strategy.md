@@ -6,12 +6,14 @@ Para garantir uma entrega legível, modular e de padrão acadêmico/Kaggle, o pr
 
 ## Estrutura de Arquivos e Módulos
 
-| Etapa | Arquivo / Notebook | Objetivo Principal |
+| Etapa | Arquivo / Módulo | Objetivo Principal |
 | :--- | :--- | :--- |
 | **01** | `01_eda.ipynb` | Análise exploratória visual, canais de cor, balanceamento e inspeção de filtros |
-| **02** | `02_pipeline_single.ipynb` | Prova de Conceito (PoC), validação do pipeline `tf.data`, callbacks e baseline inicial |
-| **03** | `03_grid_search_ensemble.ipynb` | Benchmarking de múltiplos backbones, busca sistemática de hiperparâmetros e Ensemble |
-| **04** | `04_xai_gradcam.ipynb` | Explicabilidade visual com Grad-CAM / Grad-CAM++ sobre os melhores modelos |
+| **02** | `02_pipeline_single.ipynb` <br> `02_pipeline_improved.ipynb` <br> `02_pipeline_improved_v2.ipynb` | PoC e Estudos de Ablação: Baseline natural vs. CLAHE (V1) vs. Segmentação + Balanço de Cores (V2) |
+| **Ref** | `grid_search.md` | Documentação formal da busca em grade (espaço cartesiano de 648 combinações e análise metodológica) |
+| **03** | `03_benchmark_models.ipynb` | Benchmarking sistemático dos backbones selecionados (`DenseNet`, `EfficientNetV2`, `ResNet`, `ConvNeXt`, `Xception`) |
+| **04** | `04_ensemble.ipynb` | Construção, ponderação (ROC-AUC) e validação do Ensemble final + Geração de `submission.csv` |
+| **05** | `05_xai_gradcam.ipynb` | Explicabilidade visual com Grad-CAM / Grad-CAM++ sobre os melhores modelos |
 
 ---
 
@@ -58,43 +60,85 @@ Para garantir uma entrega legível, modular e de padrão acadêmico/Kaggle, o pr
 
 ---
 
-## 3. Grid Search & Ensemble - `03_grid_search_ensemble.ipynb`
+## 3. Benchmarking de Arquiteturas Pré-Treinadas - `03_benchmark_models.ipynb`
 
-*Objetivo:* Comparar sistematicamente diferentes arquiteturas pré-treinadas e explorar um grid de hiperparâmetros para encontrar a combinação de maior generalização, finalizando com a fusão em Ensemble.
+*Objetivo:* Avaliar sistematicamente famílias arquiteturais pré-treinadas distintas sob um regime unificado de hiperparâmetros calibrados na PoC, comparando capacidade representacional, tempo de treinamento e métricas de validação.
 
-### Espaço de Busca (*Hyperparameter Grid*)
+> **Nota sobre o Grid Search:** A busca exaustiva de hiperparâmetros (648 combinações) foi teoricamente modelada e devidamente documentada no arquivo independente **[grid_search.md](file:///home/anderson/github_projects/intelligent_systems/neural-networks/unidade-2/projeto/grid_search.md)**. Conforme justificado metodologicamente, como o baseline da PoC já atingiu convergência de excelência (>95% acurácia e >0.97 ROC-AUC), os hiperparâmetros ótimos foram fixados para priorizar a diversidade arquitetural.
 
-| Hiperparâmetro | Valores / Espaço a Variar | Justificativa Técnica |
-| :--- | :--- | :--- |
-| **Modelos (Backbones)** | `DenseNet121`, `EfficientNetB0`, `ResNet50V2`, `MobileNetV2` | Avaliar famílias distintas (densas, eficientes, residuais e compactas) |
-| **`learning_rate` inicial** | `[1e-3, 5e-4, 1e-4]` | Avaliar taxa de partida ideal para convergência do Adam |
-| **`epochs`** | `[100, 200, 400]` *(com EarlyStopping ativo)* | Teto seguro de treinamento com interrupção automática |
-| **`validation_split`** | `[0.15, 0.20, 0.25]` *(estratificado)* | Sensibilidade do modelo ao volume de dados de treino vs validação |
-| **`Dropout`** | `[0.0, 0.1, 0.3]` | Avaliar o grau ótimo de desativação para evitar memorização |
-| **`batch_size`** *(base)* | `[32, 64]` | Escalado com `num_replicas_in_sync`, ideal para a GPU Tesla T4 (Colab) mantendo bom número de passos/época |
+### 3.1 Matriz de Triagem Arquitetural (Análise e Justificativa de Descarte)
 
-### Fluxo de Execução do Grid Search:
-1. **Iteração Sistemática:** Laço automatizado iterando sobre as combinações definidas no grid.
-2. **Callbacks Unificados:**
-   - `EarlyStopping(monitor='val_loss', patience=6, restore_best_weights=True)`
-   - `ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=2, min_lr=1e-6)`
-   - `ModelCheckpoint(filepath=..., monitor='val_roc_auc', mode='max', save_best_only=True)`
-3. **Quadro Comparativo de Resultados:**
-   - Tabela consolidada com `Model_Name`, `Initial_LR`, `Val_Split`, `Dropout`, `Val_Loss`, `Val_Accuracy`, `Val_ROC_AUC` e tempo por época.
-4. **Fine-Tuning dos Campeões:**
-   - Descongelamento parcial das últimas camadas convolucionais dos 2 melhores modelos com taxa de aprendizado ultra-baixa (`1e-5`).
-5. **Construção do Ensemble:**
-   - Fusão das predições dos 2 ou 3 modelos de topo através de:
-     - Média simples de probabilidades.
-     - Média ponderada baseada no ROC-AUC individual de validação.
-   - Avaliação do ganho de métricas do Ensemble frente a qualquer modelo individual.
-6. **Geração do Arquivo de Submissão (`submission.csv`):**
-   - Inferência com o Ensemble sobre as 1.821 imagens não rotuladas de `test.csv`.
-   - Exportação de `submission.csv` no padrão oficial com as colunas `[image_id, healthy, multiple_diseases, rust, scab]`.
+Dentre as 9 famílias de arquiteturas disponíveis no Keras Applications, selecionou-se **apenas uma versão representativa** por família para análise e triagem técnica fundamentada:
 
-### Template e Padronização de Exportação de Artefatos (Artigo, Avaliação e Reprodutibilidade)
+| Família | Versão Avaliada | Decisão | Justificativa Técnica para Descarte / Seleção |
+| :--- | :--- | :---: | :--- |
+| **DenseNet** | `DenseNet121` | **JÁ EXECUTADO** | Conexões densas concatenam mapas de todas as camadas. Validada na PoC com excelente convergência e baixo consumo de parâmetros. **Componente garantido no Ensemble**. |
+| **VGG** | `VGG16` | **DESCARTAR** | Arquitetura ultrapassada (2014) com ~138M de parâmetros. Sem conexões residuais (*skip connections*); em 512x512 consome excessiva VRAM e sofre degradação de gradiente. Desempenho inferior a modelos modernos com 10% do tamanho. |
+| **NASNet** | `NASNetMobile` | **DESCARTAR** | Células convolucionais heterogêneas geradas por busca automática (RL). Pouco otimizada para execução em GPU (Tensor Cores / CUDA), resultando em treino lento por época e comportamento instável com precisão mista. |
+| **Inception** | `InceptionV3` | **DESCARTAR** | Os blocos multi-escala clássicos (1x1, 3x3, 5x5) foram historicamente superados pela **Xception**, que substituiu os módulos por convoluções separáveis em profundidade. Manter ambos seria redundância teórica. |
+| **MobileNet** | `MobileNetV2` | **DESCARTAR** | Projetada estritamente para *Edge Computing* / dispositivos móveis (blocos residuais invertidos). Embora rápida, sua capacidade representacional para distinguir microlesões e pústulas foliares sutis em 512x512 é limitada em comparação às redes completas. |
+| **EfficientNetV2** | `EfficientNetV2B0` | **SELECIONADA** | Evolução da V1 descartada. Substitui as primeiras camadas por **Fused-MBConv**, acelerando o treino na GPU, além de incorporar atenção de canal (*Squeeze-and-Excitation*). Alta complementaridade com a DenseNet. |
+| **ResNet** | `ResNet50V2` | **SELECIONADA** | Padrão-ouro em conexões residuais aditivas ($x + \mathcal{F}(x)$). A versão V2 utiliza pré-ativação (BN e ReLU antes das convoluções), garantindo fluxo direto de gradientes. Erros ortogonais aos da DenseNet (ideal para Ensemble). |
+| **ConvNeXt** | `ConvNeXtTiny` | **SELECIONADA** | Representa o estado da arte convolucional (2022). Incorpora conceitos de *Vision Transformers* (kernels grandes 7x7, ativação GELU, LayerNorm), capturando contexto espacial amplo das folhas de macieira. |
+| **Xception** | `Xception` | **SELECIONADA** | Convoluções separáveis em profundidade com desacoplamento espacial/canal. Excelente capacidade de extração com parametrização eficiente. |
 
-Para garantir que todos os elementos necessários para a escrita do artigo/relatório e para a avaliação das bancas estejam prontos e organizados, o Grid Search salvará automaticamente:
+### 3.2 Protocolo de Execução do Benchmarking
+
+1. **Modelos a Treinar na Etapa 3:**
+   - `EfficientNetV2B0`
+   - `ResNet50V2`
+   - `ConvNeXtTiny`
+   - `Xception`
+   *(Nota: `DenseNet121` já está treinada com pesos e métricas persistidos na PoC).*
+2. **Condições Unificadas:**
+   - Resolução: `512x512` | Batch Size: `16` | Taxa inicial: `1e-4` (Adam) | Precisão: `mixed_float16`.
+   - Callbacks: `EarlyStopping(patience=8)`, `ReduceLROnPlateau(patience=3, factor=0.2)`, `ModelCheckpoint`.
+3. **Quadro Consolidado de Desempenho:**
+   - Tabela comparativa com: `Model_Name`, `Parâmetros`, `Tempo/Época`, `Val_Loss`, `Val_Accuracy`, `Macro_ROC_AUC` e `Macro_F1`.
+
+---
+
+## 4. Ensemble de Modelos (Fusão e Ponderação de Predições) - `04_ensemble.ipynb`
+
+*Objetivo:* Combinar as probabilidades previstas pelos múltiplos modelos de famílias distintas treinados no benchmarking, explorando a decorrelação de erros para atingir generalização superior a qualquer classificador individual (requisito central do projeto).
+
+### 4.1 Estratégias de Combinação
+
+1. **Média Simples (*Soft Voting*):**
+   $$\hat{y}_i = \frac{1}{M} \sum_{m=1}^{M} P_m(y_i)$$
+2. **Média Ponderada por Desempenho (*Weighted Blending* por ROC-AUC):**
+   $$w_m = \frac{\text{AUC}_m - 0.5}{\sum_{k=1}^M (\text{AUC}_k - 0.5)}, \quad \hat{y}_i = \sum_{m=1}^{M} w_m P_m(y_i)$$
+   - Atribui peso proporcionalmente maior aos modelos com maior capacidade de ordenação probabilística no conjunto de validação.
+
+### 4.2 Métricas de Ganho do Ensemble
+- Comparação direta: Ganho delta ($\Delta \text{AUC}$, $\Delta \text{F1}$, $\Delta \text{Acc}$) do Ensemble frente ao melhor modelo individual.
+- Matriz de confusão combinada e curva ROC do Ensemble.
+
+### 4.3 Geração da Submissão Oficial
+- Inferência do Ensemble sobre as 1.821 imagens não rotuladas de `data/test.csv`.
+- Exportação do arquivo final `data/submission.csv` no padrão da competição Kaggle (`[image_id, healthy, multiple_diseases, rust, scab]`).
+
+---
+
+## 5. Explicabilidade (XAI) - `05_xai_gradcam.ipynb`
+
+*Objetivo:* Interpretar visualmente como as redes tomam as decisões, auditando se as ativações convolucionais coincidem de fato com as lesões reais das folhas e não com ruídos de fundo.
+
+- **Carregamento dos Melhores Modelos:** Checkpoint campeão individual e modelos do Ensemble.
+- **Implementação do Grad-CAM / Grad-CAM++:**
+  - Extração de gradientes da classe predita em relação aos mapas de ativação da última camada convolucional.
+  - Ponderação dos mapas de características com retificação positiva (ReLU).
+- **Geração e Sobreposição de Heatmaps:**
+  - Mapas de calor sobrepostos às fotos originais das folhas em alta resolução.
+- **Auditoria Qualitativa por Classe:**
+  - Inspeção visual das regiões ativadas para `healthy`, `rust`, `scab` e `multiple_diseases`.
+  - Diagnóstico de eventuais casos limítrofes ou erros de predição.
+
+---
+
+## 6. Template e Padronização de Exportação de Artefatos (Artigo, Avaliação e Reprodutibilidade)
+
+Para garantir que todos os elementos necessários para a escrita do artigo/relatório e para a avaliação das bancas estejam prontos e organizados, o pipeline salvará automaticamente:
 
 #### 1. Pesos e Modelos Compilados (`models/`)
 * `models/best_{model_name}.keras`: Checkpoint com os melhores pesos de cada backbone salvo pelo `ModelCheckpoint` (via `val_roc_auc`).
@@ -114,22 +158,6 @@ Para garantir que todos os elementos necessários para a escrita do artigo/relat
 
 #### 4. Submissão Oficial
 * `data/submission.csv`: Arquivo final com IDs de teste e as 4 probabilidades previstas pelo Ensemble.
-
----
-
-## 4. Explicabilidade (XAI) - `04_xai_gradcam.ipynb`
-
-*Objetivo:* Interpretar visualmente como a rede toma as decisões, garantindo que o modelo está de fato olhando para as lesões das folhas e não para o fundo.
-
-- **Carregamento do Melhor Modelo:** Restauração do checkpoint campeão do Grid Search / Fine-Tuning.
-- **Implementação do Grad-CAM / Grad-CAM++:**
-  - Extração dos gradientes da classe de maior probabilidade em relação aos mapas de ativação da última camada convolucional.
-  - Ponderação dos mapas de características e aplicação da função ReLU para destacar apenas influências positivas.
-- **Geração de Mapas de Calor (Heatmaps):**
-  - Sobreposição do mapa de calor colorido sobre a imagem original da folha.
-- **Análise Qualitativa por Classe:**
-  - Avaliar se as regiões destacadas pelo Grad-CAM coincidem com as pústulas de ferrugem (*rust*) e manchas necróticas de sarna (*scab*).
-  - Diagnóstico de eventuais erros de classificação (falsos positivos/negativos).
 
 ---
 
