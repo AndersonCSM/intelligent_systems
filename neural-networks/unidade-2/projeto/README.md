@@ -1,6 +1,16 @@
-# Classificação de Patologias em Folhas utilizando Visão Computacional, Transfer Learning e Explicabilidade (Grad-CAM)
+# Classificação de Patologias em Folhas com Redes Neurais Convolucionais e Explicabilidade (Grad-CAM)
 
 Este projeto foi desenvolvido como parte da disciplina de **Redes Neurais Artificiais**, na Universidade Federal Rural do Semi-Árido (UFERSA).
+
+---
+
+## Abstract
+
+Automated foliar disease diagnosis is vital for precision agriculture, early crop pathogen intervention, and targeted fungicide management. In apple orchards (*Malus domestica*), fungal infections such as cedar apple rust and apple scab cause devastating yield losses if left undetected, yet open-canopy imagery introduces challenging illumination variations, complex backgrounds, overlapping foliage, and co-occurring pathologies. This project presents an end-to-end deep learning framework developed on the *Plant Pathology 2020 – FGVC7* challenge dataset (CVPR 2020), classifying leaves into four mutually exclusive categories: *healthy*, *rust*, *scab*, and *multiple diseases*. 
+
+To overcome the severe representation deficit of the co-infection class (~5% of samples), a balanced class-weighting formulation is embedded directly into the categorical cross-entropy loss without synthetic distortion. The data pipeline leverages high-resolution representations ($512 \times 512$), asynchronous `tf.data` prefetching, GPU-accelerated stochastic augmentation, and in-memory tensor caching paired with automatic mixed-precision acceleration (`mixed_float16`). We evaluate a morphological ablation study comparing raw natural baselines against HSV-space Contrast Limited Adaptive Histogram Equalization (CLAHE), followed by a unified benchmarking protocol across five topologically distinct convolutional architectures (`DenseNet121`, `EfficientNetV2B0`, `ResNet50V2`, `ConvNeXtTiny`, and `Xception`). Finally, model predictions are audited using Explainable Artificial Intelligence (XAI) via Grad-CAM and Grad-CAM++, visually confirming that convolutional attention maps localize genuine botanical lesions (rust pustules and necrotic spots) rather than spurious background artifacts.
+
+**Keywords:** Plant Pathology, Deep Learning, Convolutional Neural Networks (CNN), Explainable AI (XAI), Grad-CAM, Class Imbalance, Precision Agriculture.
 
 ---
 

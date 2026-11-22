@@ -35,7 +35,7 @@ The repository is divided into two main projects and an agent configuration dire
     ├── unidade-1/
     ├── unidade-2/
     │   ├── aula/            # Práticas de laboratório (ex: detecção com YOLOv8)
-    │   └── projeto/         # Plant Pathology 2020 (Transfer Learning, Ablações, Benchmarking, Ensemble e XAI)
+    │   └── projeto/         # Plant Pathology 2020 (CNNs, Ablação CLAHE, Benchmarking e Grad-CAM)
     └── unidade-3/
 ```
 
